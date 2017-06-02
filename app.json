@@ -1,0 +1,8 @@
+{
+  "name" :"Todo App",
+  "description" :"A Todo list application",
+  "repository":"https://github.com/tejasai97/to-do-app.git",
+  "logo":"http://to-do-app.herokuapp.com/node.svg",
+  "keywords":["node","express","static"],
+  "image":"heroku/nodejs"
+}
