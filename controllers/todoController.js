@@ -28,7 +28,7 @@ module.exports = function(app){
 
   });
 
-  app.post('/todo',urlencodedParser, function(req,res){
+  app.post('/',urlencodedParser, function(req,res){
     //get data from the view and add it to mongodb
     var newTodo = Todo(req.body).save(function(err,data){
       if (err) throw err;
