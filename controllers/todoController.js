@@ -1,24 +1,46 @@
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
-var data=[{item:'get milk'}, {item: 'walk dog'},{item:'order groceries'}];
+//connect to the database
+mongoose.Promise = global.Promise;﻿
+mongoose.connect("mongodb://test:test@ds161931.mlab.com:61931/todo");
+
+var Schema = mongoose.Schema,
+  ObjectId = Schema.ObjectId;
+
+//create schema - this is like a blueprint
+var todoSchema = new Schema({
+  item: String
+});
+
+var Todo = mongoose.model('Todo', todoSchema);
+
+//var data=[{item:'get milk'}, {item: 'walk dog'},{item:'order groceries'}];
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 module.exports = function(app){
   app.get('/todo',function(req,res){
-    res.render('todo',{todos:data});
+    //get data from mongodb and pass it to the view
+    Todo.find({},function(err,data){
+      if (err) throw err;
+      res.render('todo',{todos:data});
+    });
+
   });
 
   app.post('/todo',urlencodedParser, function(req,res){
-    data.push(req.body);
-    //res.render('todo', {todos: data});
-    res.json(data);
+    //get data from the view and add it to mongodb
+    var newTodo = Todo(req.body).save(function(err,data){
+      if (err) throw err;
+      res.json(data);
+    });
   });
 
   app.delete('/todo/:item',function(req,res){
-    data = data.filter(function(todo){
-      return todo.item.replace(/ /g, '-') !== req.params.item;
+    //delete the requested item from mongodb
+    Todo.find({item:req.params.item.replace(/\-/g," ")}).remove(function(err,data){
+      if(err) throw err;
+      res.json(data);
     });
-    //res.render('todo', {todos: data});
-    res.json(data);
   });
 };
